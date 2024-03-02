@@ -5,14 +5,14 @@
 DIR=`readlink -f .`
 PARENT_DIR=`readlink -f ${DIR}/..`
 
-export CROSS_COMPILE=$PARENT_DIR/tc/clang-r487747c/bin/aarch64-linux-gnu-
-export CC=$PARENT_DIR/tc/clang-r487747c/bin/clang
+export CROSS_COMPILE=$PARENT_DIR/env/clang-r487747c/bin/aarch64-linux-gnu-
+export CC=$PARENT_DIR/env/clang-r487747c/bin/clang
 
 export PLATFORM_VERSION=14
 export ANDROID_MAJOR_VERSION=s
-export PATH=$PARENT_DIR/tc/clang-r487747c/bin:$PATH
-export PATH=$PARENT_DIR/tc/build-tools/path/linux-x86:$PATH
-export PATH=$PARENT_DIR/tc/gas/linux-x86:$PATH
+export PATH=$PARENT_DIR/env/clang-r487747c/bin:$PATH
+export PATH=$PARENT_DIR/env/build-tools/path/linux-x86:$PATH
+export PATH=$PARENT_DIR/env/gas/linux-x86:$PATH
 export TARGET_SOC=s5e9925
 export LLVM=1 LLVM_IAS=1
 export ARCH=arm64
@@ -32,25 +32,25 @@ pause(){
 }
 
 clang(){
-  if [ ! -d $PARENT_DIR/tc/clang-r487747c ]; then
+  if [ ! -d $PARENT_DIR/env/clang-r487747c ]; then
     pause 'clone Android Clang/LLVM Prebuilts'
-    git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r487747c $PARENT_DIR/tc/clang-r487747c
+    git clone https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r487747c $PARENT_DIR/env/clang-r487747c
     . $DIR/build_menu
   fi
 }
 
 gas(){
-  if [ ! -d $PARENT_DIR/tc/gas/linux-x86 ]; then
+  if [ ! -d $PARENT_DIR/env/gas/linux-x86 ]; then
     pause 'clone prebuilt binaries of GNU `as` (the assembler)'
-    git clone https://android.googlesource.com/platform/prebuilts/gas/linux-x86 $PARENT_DIR/tc/gas/linux-x86
+    git clone https://android.googlesource.com/platform/prebuilts/gas/linux-x86 $PARENT_DIR/env/gas/linux-x86
     . $DIR/build_menu
   fi
 }
 
 build_tools(){
-  if [ ! -d $PARENT_DIR/tc/build-tools ]; then
+  if [ ! -d $PARENT_DIR/env/build-tools ]; then
     pause 'clone prebuilt binaries of build tools'
-    git clone https://android.googlesource.com/platform/prebuilts/build-tools $PARENT_DIR/tc/build-tools
+    git clone https://android.googlesource.com/platform/prebuilts/build-tools $PARENT_DIR/env/build-tools
     . $DIR/build_menu
   fi
 }
@@ -115,7 +115,12 @@ anykernel3(){
     cd $PARENT_DIR/AnyKernel3
     git reset --hard
     cp $DIR/arch/arm64/boot/Image zImage
-    sed -i "s/ExampleKernel by osm0sis/${VARIANT} kernel by saikiran/g" anykernel.sh
+    sed -i "s/ExampleKernel by osm0sis @ xda-developers/${VARIANT} kernel by arsenals/g" anykernel.sh
+    sed -i "s/device.name1=maguro/device.name1=marble/g" anykernel.sh
+    sed -i "s/device.name2=toro/device.name2=marblein/g" anykernel.sh
+    sed -i "s/device.name3=toroplus/device.name3=/g" anykernel.sh
+    sed -i "s/device.name4=tuna/device.name4=/g" anykernel.sh
+    sed -i "s/device.name5=/device.name5=/g" anykernel.sh
     zip -r9 $PARENT_DIR/${VARIANT}_kernel_`date '+%Y_%m_%d'`.zip * -x .git README.md *placeholder
     cd $DIR
     pause 'continue'
